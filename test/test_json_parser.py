@@ -2,7 +2,6 @@ import unittest
 
 from flask import Flask
 from flask_wtf import FlaskForm
-from wtforms.fields import *
 from wtforms.validators import *
 from wtforms.widgets import *
 
@@ -43,12 +42,12 @@ class TestInputParserHelper(unittest.TestCase):
             obj = {
                 "class_name": obj_cls.__name__,
                 "kwargs": obj_cls_values
-                   }
+            }
             act_obj = JsonFlaskParser._parse_obj(obj)
 
             self.assertIsInstance(act_obj, obj_cls)
 
-            if "message"in obj_cls_values:
+            if "message" in obj_cls_values:
                 self.assertEqual(act_obj.message, obj_cls_values["message"])
             if "min" in obj_cls_values:
                 self.assertEqual(act_obj.min, obj_cls_values["min"])
@@ -83,7 +82,6 @@ class TestInputParserHelper(unittest.TestCase):
             self.assertTrue(hasattr(form, variable_name))
             field = getattr(form, variable_name)
             self.assertEqual(getattr(field, "type"), field_type)
-
 
     def test_simple_field_attributes_in_field(self):
         field_type = "StringField"
@@ -136,10 +134,10 @@ class TestInputParserHelper(unittest.TestCase):
             "property": {"name": variable_name, "description": description},
             "kwargs": {"label": label,
                        "validators": {
-                           "args":{
+                           "args": {
                                "objects": [
                                    {"class_name": "InputRequired"},
-                                   {"class_name": "Length", "kwargs": {"min": 0,"max": 10}}
+                                   {"class_name": "Length", "kwargs": {"min": 0, "max": 10}}
                                ]
                            }
                        }}
@@ -170,7 +168,7 @@ class TestInputParserHelper(unittest.TestCase):
                        "choices": {
                            "args": {
                                "tuples": [
-                                   [choice1, choice1],[choice2, choice2]
+                                   [choice1, choice1], [choice2, choice2]
                                ]
                            }
                        }}
@@ -183,6 +181,7 @@ class TestInputParserHelper(unittest.TestCase):
         self.assertIsInstance(act_field.kwargs["choices"], list)
         self.assertEqual(act_field.kwargs["choices"][0], tuple([choice1, choice1]))
         self.assertEqual(act_field.kwargs["choices"][1], tuple([choice2, choice2]))
+
 
 #    def test_list_field(self):
 #        field_type = "FieldList"
@@ -250,13 +249,13 @@ class TestToTemplate(unittest.TestCase):
             self.assertEqual(getattr(string_field, "type"), subfield_type)
 
     def test_formfield(self):
-
         template_form = FormTemplate("Property", "property", "Form to change a property")
 
         data_type_property = PropertyTemplate("Data type", "data_type", "administrative", "The data type")
         data_type_field = FieldTemplate("StringField", data_type_property)
 
-        ctrl_voc_property = PropertyTemplate("Controlled Vocabulary", "ctrl_voc", "administrative", "The controlled vocabulary")
+        ctrl_voc_property = PropertyTemplate("Controlled Vocabulary", "ctrl_voc", "administrative",
+                                             "The controlled vocabulary")
         ctrl_voc_field = FieldTemplate("SelectField", ctrl_voc_property)
 
         voc_type_property = PropertyTemplate("Subform", "subform", "administrative", description="A subform")
@@ -275,10 +274,8 @@ class TestToTemplate(unittest.TestCase):
             print("Hello World")
 
     def test_fieldlist_formfield(self):
-
         form_type = "FieldList"
         form_name = "contact_form"
-
 
         # template_form = FormTemplate("Contacts", form_name, description="A form to register multiple contacts")
         #
@@ -297,35 +294,35 @@ class TestToTemplate(unittest.TestCase):
                     "level": "administrative",
                     "description": "A contact list"
                 },
-                 "class_name": form_type,
-                 "args": {
-                     "objects": [
-                         {"class_name": "FormField",
-                          "name": "contact",
-                          "fields": [
-                              {
-                                  "class_name": "StringField",
-                                  "property": {
-                                      "label": "First Name",
-                                      "name": "firstname",
-                                      "level": "administrative",
-                                      "description": "The first name",
-                                  },
-                              },
-                              {
-                                  "class_name": "StringField",
-                                  "property": {
-                                      "label": "Last Name",
-                                      "name": "lastname",
-                                      "level": "administrative",
-                                      "description": "The last name"
-                                  },
-                              },
-                          ]
-                          }
-                     ]
-                 },
-                 "kwargs": {"min_entries": 1}}
+                    "class_name": form_type,
+                    "args": {
+                        "objects": [
+                            {"class_name": "FormField",
+                             "name": "contact",
+                             "fields": [
+                                 {
+                                     "class_name": "StringField",
+                                     "property": {
+                                         "label": "First Name",
+                                         "name": "firstname",
+                                         "level": "administrative",
+                                         "description": "The first name",
+                                     },
+                                 },
+                                 {
+                                     "class_name": "StringField",
+                                     "property": {
+                                         "label": "Last Name",
+                                         "name": "lastname",
+                                         "level": "administrative",
+                                         "description": "The last name"
+                                     },
+                                 },
+                             ]
+                             }
+                        ]
+                    },
+                    "kwargs": {"min_entries": 1}}
             ]
         }
 

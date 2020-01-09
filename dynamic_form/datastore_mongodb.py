@@ -30,7 +30,7 @@ class MongoDsAdapter(AbstractDataStore):
         """
        load form based on form_name
         """
-        return self.collection.find_one({"form_name":form_name})
+        return self.collection.find_one({"form_name": form_name})
 
     def insert_form(self, form_template):
         """Push new form to the database"""

@@ -1,4 +1,3 @@
-
 class BaseTemplate(object):
 
     def to_dict(self) -> dict:
@@ -8,7 +7,6 @@ class BaseTemplate(object):
 class PropertyTemplate(BaseTemplate):
 
     def __init__(self, label, name, level, description):
-
         self.label = label
         self.name = name
         self.level = level
@@ -25,7 +23,7 @@ class PropertyTemplate(BaseTemplate):
 
 class ObjectTemplate(BaseTemplate):
 
-    def __init__(self, class_name, property:PropertyTemplate):
+    def __init__(self, class_name, property: PropertyTemplate):
         self.class_name = class_name
         self.property = property
 
@@ -49,7 +47,7 @@ class ObjectsTemplate(BaseTemplate):
 
 class FieldTemplate(BaseTemplate):
 
-    def __init__(self, class_name, property:PropertyTemplate, args=None, **kwargs):
+    def __init__(self, class_name, property: PropertyTemplate, args=None, **kwargs):
         self.class_name = class_name
         self.property = property
         self.args = args or []
@@ -66,14 +64,13 @@ class FieldTemplate(BaseTemplate):
 
 class FormFieldTemplate(FieldTemplate):
 
-    def __init__(self, property:PropertyTemplate, class_name="FormField", ):
+    def __init__(self, property: PropertyTemplate, class_name="FormField", ):
         super(FormFieldTemplate, self).__init__(class_name=class_name, property=property)
         self.fields = []
 
-    def add_field(self, field:FieldTemplate):
+    def add_field(self, field: FieldTemplate):
         self.fields.append(field)
         return self
-
 
     def to_dict(self) -> dict:
         return {
@@ -82,6 +79,7 @@ class FormFieldTemplate(FieldTemplate):
             "property": self.property.to_dict(),
             "fields": [field.to_dict() for field in self.fields]
         }
+
 
 class FormTemplate(BaseTemplate):
 
@@ -99,7 +97,7 @@ class FormTemplate(BaseTemplate):
             "fields": [field.to_dict() for field in self.fields],
         }
 
-    def add_field(self, field:FieldTemplate):
+    def add_field(self, field: FieldTemplate):
         self.fields.append(field)
 
         return self

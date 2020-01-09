@@ -37,7 +37,7 @@ class FormManager:
         First, local cache is examined for the form. If unsuccessful, it tries to locate the form in the database.
 
         :param str form_name: the name of the form
-        :param boolean use_cache: If true, first tries to loccate form in cache.
+        :param boolean use_cache: If true, first tries to locate form in cache.
         :raises: FormManagerException: If neither cache nor database contains form with passed name
         :returns: A form class
         :rtype: wtforms.FlaskForm

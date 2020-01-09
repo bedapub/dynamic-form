@@ -51,8 +51,6 @@ class JsonFlaskParser(AbstractParserAdapter):
     #
     #     return field
 
-
-
     @staticmethod
     def _get_cls(cls_name):
         switcher = {
@@ -139,7 +137,6 @@ class JsonFlaskParser(AbstractParserAdapter):
 
         if "kwargs" in obj:
             kwargs = cls._parse_kwargs(obj["kwargs"])
-
 
         obj_cls = JsonFlaskParser._get_cls(obj["class_name"])
         return obj_cls(*args, **kwargs)

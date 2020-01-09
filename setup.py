@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="DynamicForm",
@@ -8,5 +8,5 @@ setup(
     author_email="rafael.mueller1@gmail.com",
     description="Read and write forms dynamically from a datastore (i.e. database) during runtime",
     packages=["dynamic_form"],
-    long_description=open("README.md").read(), install_requires=['requests', 'pymongo', 'wtforms']
+    long_description=open("README.rst").read(), install_requires=['requests', 'pymongo', 'wtforms']
 )
