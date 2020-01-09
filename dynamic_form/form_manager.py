@@ -1,18 +1,14 @@
-import warnings
-
 from dynamic_form.abstract_datastore import AbstractDataStore
 from dynamic_form.abstract_parser import AbstractParserAdapter as AbstractParserAdapter
 from dynamic_form.parser_json import JsonFlaskParser as JsonFormParser
+
 
 class FormManagerException(Exception):
     pass
 
 
 class FormManager:
-    """
-    A controller class which fetches forms from a database and converts them into FlaskForms.
-
-    """
+    """A controller class which fetches forms from a database and converts them into FlaskForms."""
 
     def __init__(self, ds_adapter=None, input_parser=JsonFormParser()):
         """
@@ -40,11 +36,9 @@ class FormManager:
 
         First, local cache is examined for the form. If unsuccessful, it tries to locate the form in the database.
 
-        :param
-        str form_name: the name of the form
-        boolean use_cache: If true, first tries to loccate form in cache.
-        :raises:
-            FormManagerException: If neither cache nor database contains form with passed name
+        :param str form_name: the name of the form
+        :param boolean use_cache: If true, first tries to loccate form in cache.
+        :raises: FormManagerException: If neither cache nor database contains form with passed name
         :returns: A form class
         :rtype: wtforms.FlaskForm
         """

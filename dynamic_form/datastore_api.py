@@ -5,19 +5,25 @@ from dynamic_form.abstract_datastore import AbstractDataStore
 
 
 class ApiDataStore(AbstractDataStore):
+    """Concrete implementation for a data store that uses an API"""
 
     def __init__(self, url):
         self.url = url
 
     def load_form(self, identifier):
-        raise NotImplementedError
+        result = requests.get(f"{self.url}/forms/id/{identifier}")
+        yield self._process_results(result)
 
     def load_form_by_name(self, name):
         raise NotImplementedError
 
     def load_all_forms(self):
-        """ Load all forms from the API """
+        """Load all forms from the API"""
         results = requests.get(f"{self.url}/forms/")
+
+        yield self._process_results(results)
+
+    def _process_results(self, results):
 
         if results.status_code != 200:
             raise Exception(results.json())

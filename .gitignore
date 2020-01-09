@@ -4,10 +4,12 @@
 .coverage
 
 # Compiled / optimized files
-__pycharch__
+__pycache__/
 *.py[cod]
 *$py.class
 
+
+# IDE
 .idea
 
 # Flask
@@ -18,3 +20,7 @@ instance/
 Flask-App/snippets/
 
 *.egg-info
+
+
+# Sphinx documentation
+doc/build/

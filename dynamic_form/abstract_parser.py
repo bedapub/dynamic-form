@@ -6,16 +6,16 @@ class ParseException(Exception):
 
 
 class AbstractParserAdapter(ABC):
-    """ Interface class for all parser adapters. """
+    """Interface class for all parser adapters."""
 
     @classmethod
     @abstractmethod
     def to_form(cls, template_form):
-        """" The template is converted into a form """
+        """"The template is converted into a form"""
         raise NotImplementedError
 
     @classmethod
     @abstractmethod
     def to_template(cls, form, **kwargs):
-        """ Create a template from a given form """
+        """Create a template from a given form"""
         raise NotImplementedError

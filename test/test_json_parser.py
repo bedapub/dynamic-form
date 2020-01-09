@@ -10,7 +10,7 @@ from dynamic_form.parser_json import JsonFlaskParser
 
 
 class TestInputParserHelper(unittest.TestCase):
-    """The following test check the helper functions of parser json. """
+    """The following test check the helper functions of parser json."""
 
     def test_tuple_diff_length(self):
         """Test conversion of tuples"""
@@ -25,7 +25,7 @@ class TestInputParserHelper(unittest.TestCase):
         self.assertEqual(act_tuple, exp_tuple)
 
     def test_obj_validators_widgets(self):
-        """ Test validator and widget parsing with and without attributes"""
+        """Test validator and widget parsing with and without attributes"""
 
         validators_widgets = {
             InputRequired: {},
@@ -220,7 +220,7 @@ class TestToTemplate(unittest.TestCase):
         cls.app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
     def test_to_template(self):
-        """ Create form which contains a subform """
+        """Create form which contains a subform"""
 
         # Create from template
         field_type = "FieldList"

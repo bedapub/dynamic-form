@@ -115,7 +115,7 @@ class JsonFlaskParser(AbstractParserAdapter):
 
     @classmethod
     def _parse_obj(cls, obj):
-        """ Create instance and add attributes
+        """Create instance and add attributes
 
              "object" : {
                  "class_name" : "ClassName",
@@ -212,7 +212,7 @@ class JsonFlaskParser(AbstractParserAdapter):
 
     @classmethod
     def _parse_tuple(cls, tuples):
-        """ Parse a tuple with multiple values
+        """Parse a tuple with multiple values
         "tuples" : [ ["value1", "value2"], ["value1", "value2"] ]
         """
         tuple_list = []
