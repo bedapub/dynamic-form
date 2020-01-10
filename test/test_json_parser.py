@@ -251,15 +251,15 @@ class TestToTemplate(unittest.TestCase):
     def test_formfield(self):
         template_form = FormTemplate("Property", "property", "Form to change a property")
 
+        # TODO Replace with SelectField
         data_type_property = PropertyTemplate("Data type", "data_type", "administrative", "The data type")
         data_type_field = FieldTemplate("StringField", data_type_property)
 
         ctrl_voc_property = PropertyTemplate("Controlled Vocabulary", "ctrl_voc", "administrative",
                                              "The controlled vocabulary")
-        ctrl_voc_field = FieldTemplate("SelectField", ctrl_voc_property)
+        ctrl_voc_field = FieldTemplate("StringField", ctrl_voc_property)
 
-        voc_type_property = PropertyTemplate("Subform", "subform", "administrative", description="A subform")
-        voc_type_field = FormFieldTemplate(property=voc_type_property)
+        voc_type_field = FormFieldTemplate(label="Subform", name="subform", description="A subform")
 
         voc_type_field = voc_type_field.add_field(ctrl_voc_field)
         voc_type_field = voc_type_field.add_field(data_type_field)
@@ -270,8 +270,6 @@ class TestToTemplate(unittest.TestCase):
             form_name, from_cls = JsonFlaskParser.to_form(template_form.to_dict())
 
             form_instance = from_cls()
-
-            print("Hello World")
 
     def test_fieldlist_formfield(self):
         form_type = "FieldList"

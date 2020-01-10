@@ -21,7 +21,7 @@ class ApiDataStore(AbstractDataStore):
         """Load all forms from the API"""
         results = requests.get(f"{self.url}/forms/")
 
-        yield self._process_results(results)
+        return self._process_results(results)
 
     def _process_results(self, results):
 

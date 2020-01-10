@@ -64,8 +64,11 @@ class FieldTemplate(BaseTemplate):
 
 class FormFieldTemplate(FieldTemplate):
 
-    def __init__(self, property: PropertyTemplate, class_name="FormField", ):
-        super(FormFieldTemplate, self).__init__(class_name=class_name, property=property)
+    def __init__(self, name, label, description, class_name="FormField", ):
+        super(FormFieldTemplate, self).__init__(class_name=class_name, property=None)
+        self.name = name
+        self.label = label
+        self.description = description
         self.fields = []
 
     def add_field(self, field: FieldTemplate):
@@ -75,8 +78,9 @@ class FormFieldTemplate(FieldTemplate):
     def to_dict(self) -> dict:
         return {
             "class_name": self.class_name,
-            "name": self.property.name,
-            "property": self.property.to_dict(),
+            "name": self.name,
+            "label": self.label,
+            "description": self.description,
             "fields": [field.to_dict() for field in self.fields]
         }
 
@@ -102,11 +106,3 @@ class FormTemplate(BaseTemplate):
 
         return self
 
-
-if __name__ == '__main__':
-    form_template = FormTemplate("Form", "form", "A simple form")
-    form_template = form_template.add_field("StringField", PropertyTemplate("First Name",
-                                                                            "first name",
-                                                                            "First name of a user"))
-
-    print(form_template)

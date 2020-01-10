@@ -105,8 +105,14 @@ class JsonFlaskParser(AbstractParserAdapter):
 
         field_template["kwargs"].update(value)
 
-        # The property name is required, since it determines under which name an item is inserted.
-        field_name = field_template["property"]["name"]
+        # The name of field is generally determined by its property. If the field does not have a property,
+        # try to get the name from the field directly. A FormField (nested form) normally does not have a property.
+        if field_template.get("property"):
+            # The property name determines under which name a value is inserted.
+            field_name = field_template["property"]["name"]
+        else:
+            field_name = field_template["name"]
+
         field = cls._parse_obj(field_template)
 
         return field_name, field
@@ -126,9 +132,6 @@ class JsonFlaskParser(AbstractParserAdapter):
             _, form = JsonFlaskParser.to_form(obj)
             obj_cls = FormField(form)
             return obj_cls
-
-        if obj.get("class_name") == "FieldList":
-            print("Is FieldList")
 
         args, kwargs = [], {}
 
