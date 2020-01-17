@@ -54,7 +54,7 @@ class FormManager:
             # except StopIteration as e:
             #     raise FormManagerException("Could not find form with name: {}".format(form_name))
 
-            form_name, form = self.parser.parse_to_form(form_template)
+            form_name, form = self.parser.to_form(form_template)
             self.form_cache[form_name] = form
             return form
 
@@ -85,7 +85,6 @@ class FormManager:
         forms_template = self.ds_adapter.load_all_forms()
 
         for form_template in forms_template:
-            print(f"Print {form_template.get('name')}")
             form_name, form = self.parser.to_form(form_template)
 
             # Prevent overwriting a form which is already in the cache.

@@ -15,7 +15,18 @@ class ApiDataStore(AbstractDataStore):
         yield self._process_results(result)
 
     def load_form_by_name(self, name):
-        raise NotImplementedError
+        header = {"X-Fields": "name, id"}
+        res_all_forms = requests.get(f"{self.url}/forms/", headers=header)
+
+        try:
+            form_entry = next(filter(lambda entry: entry["name"] == name, res_all_forms.json()))
+
+            res = requests.get(f"{self.url}/forms/id/{form_entry['id']}")
+
+            return res.json()
+
+        except StopIteration:
+            raise AttributeError(f"Form with name {name} not found")
 
     def load_all_forms(self):
         """Load all forms from the API"""

@@ -13,7 +13,8 @@ class JsonFlaskParser(AbstractParserAdapter):
     @classmethod
     def to_form(cls, template_form):
 
-        form_name = template_form["name"]
+        # Nested forms have their name stored in the property
+        form_name = template_form.get("name") or template_form["property"]["name"]
 
         # Define empty form class with the specified name
         form_cls = type(form_name, (FlaskForm,), {})
@@ -105,13 +106,8 @@ class JsonFlaskParser(AbstractParserAdapter):
 
         field_template["kwargs"].update(value)
 
-        # The name of field is generally determined by its property. If the field does not have a property,
-        # try to get the name from the field directly. A FormField (nested form) normally does not have a property.
-        if field_template.get("property"):
-            # The property name determines under which name a value is inserted.
-            field_name = field_template["property"]["name"]
-        else:
-            field_name = field_template["name"]
+        # The name of field is determined by its property.
+        field_name = field_template["property"]["name"]
 
         field = cls._parse_obj(field_template)
 
@@ -130,7 +126,7 @@ class JsonFlaskParser(AbstractParserAdapter):
         # If the form contains a subform
         if obj.get("class_name") == "FormField":
             _, form = JsonFlaskParser.to_form(obj)
-            obj_cls = FormField(form)
+            obj_cls = FormField(form_class=form)
             return obj_cls
 
         args, kwargs = [], {}
@@ -186,6 +182,8 @@ class JsonFlaskParser(AbstractParserAdapter):
             elif isinstance(value, dict):
                 # TODO: Check this line
                 kwargs[key] = cls._parse_dict(value)
+            elif key == "choices":
+                continue
             else:
                 raise NotImplementedError
 
@@ -237,5 +235,3 @@ class JsonFlaskParser(AbstractParserAdapter):
                 choices.append((choice["name"], choice["label"]))
 
             return {"args": {"tuples": choices}}
-        else:
-            raise KeyError

@@ -204,9 +204,12 @@ class TestInputParserHelper(unittest.TestCase):
 from dynamic_form.template_builder import (
     FormTemplate,
     PropertyTemplate,
-    ObjectTemplate,
     FieldTemplate,
     FormFieldTemplate,
+    VocabularyTypeTemplate,
+    ControlledVocabularyTemplate,
+    ItemTemplate,
+    ArgsTemplate
 )
 
 
@@ -218,25 +221,18 @@ class TestToTemplate(unittest.TestCase):
         cls.app.secret_key = "not secret"
         cls.app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
-    def test_to_template(self):
-        """Create form which contains a subform"""
+    def test_form_with_fieldList(self):
+        """Create form which contains a FieldList"""
 
-        # Create from template
-        field_type = "FieldList"
-        subfield_type = "StringField"
-
-        template_form = FormTemplate("Property", "property", "Form to change a property")
-
-        synonym_list_property = PropertyTemplate("Synonyms", "synonyms", "administrative", "List of synonyms")
-        string_field_property = PropertyTemplate("Synonym", "synonym", "administrative", "A single synonym")
-        stringfield_object = ObjectTemplate(subfield_type, string_field_property)
-
-        string_field = FieldTemplate(field_type,
-                                     synonym_list_property,
-                                     args={"objects": [stringfield_object.to_dict()]},
-                                     min_entries=1,
-                                     )
-        template_form = template_form.add_field(string_field)
+        template_form = FormTemplate("Property", "property", "Form to change a property")\
+            .add_field(
+            FieldTemplate("FieldList",
+                          PropertyTemplate("Synonyms", "synonyms", "administrative", "List of synonyms"),
+                          ArgsTemplate("DataObjects", [
+                              FieldTemplate("StringField",
+                                            PropertyTemplate("Synonym", "synonym", "administrative",
+                                                             "A single synonym"))]),
+                          min_entries=1))
 
         with self.app.test_request_context():
             form_name, form_cls = JsonFlaskParser.to_form(template_form.to_dict())
@@ -244,90 +240,61 @@ class TestToTemplate(unittest.TestCase):
 
             self.assertTrue(hasattr(form_instance, "synonyms"))
             synonym_field = getattr(form_instance, "synonyms")
-            self.assertEqual(getattr(synonym_field, "type"), field_type)
+            self.assertEqual(getattr(synonym_field, "type"), "FieldList")
             string_field = getattr(synonym_field, "entries")[0]
-            self.assertEqual(getattr(string_field, "type"), subfield_type)
+            self.assertEqual(getattr(string_field, "type"), "StringField")
 
-    def test_formfield(self):
-        template_form = FormTemplate("Property", "property", "Form to change a property")
+    def test_form_with_formfield(self):
 
-        # TODO Replace with SelectField
-        data_type_property = PropertyTemplate("Data type", "data_type", "administrative", "The data type")
-        data_type_field = FieldTemplate("StringField", data_type_property)
+        data_type_ctrl_voc = ControlledVocabularyTemplate("Data Type", "data_type", "All supported data types")\
+            .add_item(ItemTemplate("Text", "text", "Uncontrolled text input"))\
+            .add_item(ItemTemplate("Boolean", "boolean", "Boolean input"))\
+            .add_item(ItemTemplate("Controlled Vocabulary", "ctrl_voc", "Value from defined list"))
 
-        ctrl_voc_property = PropertyTemplate("Controlled Vocabulary", "ctrl_voc", "administrative",
-                                             "The controlled vocabulary")
-        ctrl_voc_field = FieldTemplate("StringField", ctrl_voc_property)
+        template_form = FormTemplate("Property", "property", "Form to change a property")\
+            .add_field(
+            FormFieldTemplate(prop=PropertyTemplate("Vocabulary Type", "voc_type", "administrative",
+                                                    "Vocabulary Type restricts the possible inputs."))\
 
-        voc_type_field = FormFieldTemplate(label="Subform", name="subform", description="A subform")
+                .add_field(
+                FieldTemplate("SelectField",
+                              PropertyTemplate("Data type", "data_type", "administrative", "The data type",
+                                               VocabularyTypeTemplate("ctrl_voc", data_type_ctrl_voc))))
+                .add_field(
+                # TODO replace StringField with SelectField
+                FieldTemplate("StringField",
+                              PropertyTemplate("Controlled Vocabulary", "ctrl_voc", "administrative",
+                                               "The controlled vocabulary"))))
 
-        voc_type_field = voc_type_field.add_field(ctrl_voc_field)
-        voc_type_field = voc_type_field.add_field(data_type_field)
-
-        template_form = template_form.add_field(voc_type_field)
+        form_name, from_cls = JsonFlaskParser.to_form(template_form.to_dict())
 
         with self.app.test_request_context():
-            form_name, from_cls = JsonFlaskParser.to_form(template_form.to_dict())
-
             form_instance = from_cls()
 
-    def test_fieldlist_formfield(self):
-        form_type = "FieldList"
-        form_name = "contact_form"
+    def test_form_with_fieldList_and_FormField(self):
 
-        # template_form = FormTemplate("Contacts", form_name, description="A form to register multiple contacts")
-        #
-        # list_property = PropertyTemplate("Contact list", "contact_list", "administrative", "A contact list")
-        #
-        # list_field = FieldTemplate(form_type, list_property, args=[])
-
-        template_form = {
-            "label": "Contacts",
-            "name": form_name,
-            "description": "A form to register multiple contacts",
-            "fields": [
-                {"property": {
-                    "name": "contact_list",
-                    "label": "Contact List",
-                    "level": "administrative",
-                    "description": "A contact list"
-                },
-                    "class_name": form_type,
-                    "args": {
-                        "objects": [
-                            {"class_name": "FormField",
-                             "name": "contact",
-                             "fields": [
-                                 {
-                                     "class_name": "StringField",
-                                     "property": {
-                                         "label": "First Name",
-                                         "name": "firstname",
-                                         "level": "administrative",
-                                         "description": "The first name",
-                                     },
-                                 },
-                                 {
-                                     "class_name": "StringField",
-                                     "property": {
-                                         "label": "Last Name",
-                                         "name": "lastname",
-                                         "level": "administrative",
-                                         "description": "The last name"
-                                     },
-                                 },
-                             ]
-                             }
-                        ]
-                    },
-                    "kwargs": {"min_entries": 1}}
-            ]
-        }
+        template_form = FormTemplate("Contacts", "contact_form", "A form to register multiple contacts")\
+            .add_field(FieldTemplate("FieldList",
+                                     PropertyTemplate("Contact List", "contact_list", "administrative",
+                                                      "A contact list"),
+                                     ArgsTemplate("DataObjects", [
+                                         FormFieldTemplate(PropertyTemplate("Contact", "contact", "administrative",
+                                                                            "A contact"))
+                                                  .add_field(FieldTemplate("StringField",
+                                                                           PropertyTemplate("First Name", "firstname",
+                                                                                            "administrative",
+                                                                                            "first name of user")))
+                                                  .add_field(FieldTemplate("StringField",
+                                                                           PropertyTemplate("Last Name", "lastname",
+                                                                                            "administrative",
+                                                                                            "last name of user")))
+                       ]),
+                       min_entries=1))
 
         with self.app.test_request_context():
-            act_form_name, form_cls = JsonFlaskParser.to_form(template_form)
+            act_form_name, form_cls = JsonFlaskParser.to_form(template_form.to_dict())
             form_instance = form_cls()
-            self.assertEqual(act_form_name, form_name)
+            self.assertEqual(act_form_name, "contact_form")
             self.assertTrue(hasattr(form_instance, "contact_list"))
             contact_list_field = getattr(form_instance, "contact_list")
             self.assertEqual(getattr(contact_list_field, "type"), "FieldList")
