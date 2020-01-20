@@ -9,16 +9,18 @@ class BaseTemplate(object):
 
 class LNDTemplate(BaseTemplate):
 
-    def __init__(self, label, name, description):
+    def __init__(self, label, name, description, deprecated=False):
         self.label = label
         self.name = name
         self.description = description
+        self.deprecated=deprecated
 
     def to_dict(self) -> dict:
         return {
             "label": self.label,
             "name": self.name,
-            "description": self.description
+            "description": self.description,
+            "deprecated": self.deprecated,
         }
 
 
@@ -59,7 +61,7 @@ class ControlledVocabularyTemplate(LNDTemplate):
         return result
 
 
-class VocabularyTypeTemplate(BaseTemplate):
+class ValueTypeTemplate(BaseTemplate):
 
     def __init__(self, data_type="text", controlled_vocabulary: ControlledVocabularyTemplate = None):
 
@@ -80,19 +82,20 @@ class VocabularyTypeTemplate(BaseTemplate):
 
 class PropertyTemplate(LNDTemplate):
 
-    def __init__(self, label, name, level, description,
-                 vocabulary_type: VocabularyTypeTemplate = VocabularyTypeTemplate()
-                 ):
-        super(PropertyTemplate, self).__init__(label, name, description)
+    def __init__(self, label, name, level, description, value_type: ValueTypeTemplate = ValueTypeTemplate(),
+                 synonyms=None, **kwargs):
+        super(PropertyTemplate, self).__init__(label, name, description, **kwargs)
 
         self.level = level
-        self.vocabulary_type = vocabulary_type
+        self.value_type = value_type
+        self.synonyms = synonyms
 
     def to_dict(self) -> dict:
         result = super(PropertyTemplate, self).to_dict()
         result.update({
             "level": self.level,
-            "vocabulary_type": self.vocabulary_type if type(self.vocabulary_type) == str else self.vocabulary_type.to_dict(),
+            "value_type": self.value_type if type(self.value_type) == str else self.value_type.to_dict(),
+            "synonyms": [] if not self.synonyms else self.synonyms,
         })
 
         return result
@@ -188,4 +191,20 @@ class FormTemplate(BaseTemplate):
         self.fields.append(field)
 
         return self
+
+
+class UserTemplate(BaseTemplate):
+    def __init__(self, firstname, lastname, email, password):
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+        self.password = password
+
+    def to_dict(self) -> dict:
+        return {
+            "firstname": self.firstname,
+            "lastname": self.lastname,
+            "email": self.email,
+            "password": self.password
+        }
 

@@ -1,10 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-class ParseException(Exception):
-    pass
-
-
 class AbstractParserAdapter(ABC):
     """Interface class for all parser adapters."""
 

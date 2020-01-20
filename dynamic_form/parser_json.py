@@ -9,6 +9,13 @@ from dynamic_form.abstract_parser import AbstractParserAdapter
 
 
 class JsonFlaskParser(AbstractParserAdapter):
+    """Class to build a FlaskForm from a json object
+
+    # >>> from dynamic_form.template_builder import FormTemplate, FieldTemplate
+    # ... form_template = FormTemplate("")
+    # ...JsonFlaskParser.to_form()
+
+    """
 
     @classmethod
     def to_form(cls, template_form):
@@ -228,8 +235,8 @@ class JsonFlaskParser(AbstractParserAdapter):
 
         if lbl in field_template["kwargs"]:
             return field_template["kwargs"]["choices"]
-        elif field_template.get("property", {}).get("vocabulary_type", {}).get("data_type") == "ctrl_voc":
-            choice_list = field_template["property"]["vocabulary_type"].get("controlled_vocabulary", {})["items"]
+        elif field_template.get("property", {}).get("value_type", {}).get("data_type") == "ctrl_voc":
+            choice_list = field_template["property"]["value_type"].get("controlled_vocabulary", {})["items"]
             choices = []
             for choice in choice_list:
                 choices.append((choice["name"], choice["label"]))

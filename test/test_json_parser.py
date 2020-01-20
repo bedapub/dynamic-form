@@ -206,7 +206,7 @@ from dynamic_form.template_builder import (
     PropertyTemplate,
     FieldTemplate,
     FormFieldTemplate,
-    VocabularyTypeTemplate,
+    ValueTypeTemplate,
     ControlledVocabularyTemplate,
     ItemTemplate,
     ArgsTemplate
@@ -259,7 +259,7 @@ class TestToTemplate(unittest.TestCase):
                 .add_field(
                 FieldTemplate("SelectField",
                               PropertyTemplate("Data type", "data_type", "administrative", "The data type",
-                                               VocabularyTypeTemplate("ctrl_voc", data_type_ctrl_voc))))
+                                               ValueTypeTemplate("ctrl_voc", data_type_ctrl_voc))))
                 .add_field(
                 # TODO replace StringField with SelectField
                 FieldTemplate("StringField",

@@ -10,7 +10,7 @@ class FormManagerException(Exception):
 class FormManager:
     """A controller class which fetches forms from a database and converts them into FlaskForms."""
 
-    def __init__(self, ds_adapter=None, input_parser=JsonFormParser()):
+    def __init__(self, ds_adapter=None, input_parser=JsonFormParser(), initial_load=True):
         """
         :param input_parser: A custom parsers to convert the database entry into a FlaskForm. Has to inherit from
         the ParserAdapterInterface class.
@@ -29,7 +29,8 @@ class FormManager:
 
         # Local cache for all forms
         self.form_cache = {}
-        self._fetch_forms()
+        if initial_load:
+            self._fetch_forms()
 
     def get_form(self, form_name, use_cache=True):
         """Return form based on form_name.
