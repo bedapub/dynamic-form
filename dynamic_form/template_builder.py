@@ -24,10 +24,12 @@ class LNDTemplate(BaseTemplate):
         }
 
 
-class ItemTemplate(LNDTemplate):
+class ItemTemplate():
 
     def __init__(self, label, name, description):
-        super(ItemTemplate, self).__init__(label, name, description)
+        self.label = label
+        self.name = name
+        self.description = description
         self.synonyms = []
 
     def add_synonym(self, synonym):
@@ -36,17 +38,21 @@ class ItemTemplate(LNDTemplate):
         return self
 
     def to_dict(self) -> dict:
-        result = super(ItemTemplate, self).to_dict()
-        result.update({
+        result = ({
+            "label": self.label,
+            "name": self.name,
+            "description": self.description,
             "synonyms": [item.to_dict() for item in self.synonyms]
         })
         return result
 
 
-class ControlledVocabularyTemplate(LNDTemplate):
+class ControlledVocabularyTemplate():
 
     def __init__(self, label, name, description):
-        super(ControlledVocabularyTemplate, self).__init__(label, name, description)
+        self.label = label
+        self.name = name
+        self.description = description
         self.items = []
 
     def add_item(self, item: ItemTemplate):
@@ -54,10 +60,12 @@ class ControlledVocabularyTemplate(LNDTemplate):
         return self
 
     def to_dict(self) -> dict:
-        result = super(ControlledVocabularyTemplate, self).to_dict()
-        result.update({
+        result = {
+            "label": self.label,
+            "name": self.name,
+            "description": self.description,
             "items": [item.to_dict() for item in self.items]
-        })
+        }
         return result
 
 
