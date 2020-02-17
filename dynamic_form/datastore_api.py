@@ -1,7 +1,10 @@
 import requests
+import logging
 
 
 from dynamic_form.abstract_datastore import AbstractDataStore
+
+logger = logging.getLogger(__name__)
 
 
 class ApiDataStore(AbstractDataStore):
@@ -12,25 +15,40 @@ class ApiDataStore(AbstractDataStore):
 
     def load_form(self, identifier):
         result = requests.get(f"{self.url}/forms/id/{identifier}")
+
+        if result.status_code != 200:
+            logger.error(f"Failed to load form. {result.json()}")
+
         yield self._process_results(result)
 
     def load_form_by_name(self, name):
         header = {"X-Fields": "name, id"}
-        res_all_forms = requests.get(f"{self.url}/forms", headers=header)
+        endpoint = f"{self.url}/forms"
+
+        res_all_forms = requests.get(endpoint, headers=header)
+
+        if res_all_forms.status_code != 200:
+            logger.error(f"Failed to load id and name form. {res_all_forms.json()}")
 
         try:
             form_entry = next(filter(lambda entry: entry["name"] == name, res_all_forms.json()))
 
             res = requests.get(f"{self.url}/forms/id/{form_entry['id']}")
 
+            if res.status_code != 200:
+                logger.error(f"Failed to load form by name. {res.json()}")
+
             return res.json()
 
         except StopIteration:
-            raise AttributeError(f"Form with name {name} not found")
+            raise AttributeError(f"Form with name '{name}' not found")
 
     def load_all_forms(self):
         """Load all forms from the API"""
         results = requests.get(f"{self.url}/forms")
+
+        if results.status_code != 200:
+            logger.error(f"Failed to load all forms. {results.json()}")
 
         return self._process_results(results)
 
@@ -44,13 +62,9 @@ class ApiDataStore(AbstractDataStore):
 
     def insert_form(self, form_template):
         raise NotImplementedError
-        # results = requests.post(f"{self.url}/form", json=form_template)
-        # return results
 
     def find_form(self, *args, id=None, **kwargs):
         raise NotImplementedError
-        # results = requests.get(f"{self.url}/form/id/{id}")
-        # return results
 
     def deprecate_form(self, identifier):
         raise NotImplementedError
