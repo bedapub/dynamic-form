@@ -16,7 +16,7 @@ class ApiDataStore(AbstractDataStore):
 
     def load_form_by_name(self, name):
         header = {"X-Fields": "name, id"}
-        res_all_forms = requests.get(f"{self.url}/forms/", headers=header)
+        res_all_forms = requests.get(f"{self.url}/forms", headers=header)
 
         try:
             form_entry = next(filter(lambda entry: entry["name"] == name, res_all_forms.json()))
@@ -30,7 +30,7 @@ class ApiDataStore(AbstractDataStore):
 
     def load_all_forms(self):
         """Load all forms from the API"""
-        results = requests.get(f"{self.url}/forms/")
+        results = requests.get(f"{self.url}/forms")
 
         return self._process_results(results)
 
