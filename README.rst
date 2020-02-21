@@ -5,8 +5,9 @@ A package to create forms dynamically from a data store during runtime.
 
 Documentation
 -------------
-Sphinx documentation is available in `/docs`. Change into `/docs` and call `make html` to create the documentation. The
-documentation includes a getting started section.
+`Sphinx documentation`_ is directly accessible or can be build with :console:`make html`.
+
+.. _Sphinx documentation: ./docs/source/Introduction.rst
 
 Built with
 ----------
