@@ -1,6 +1,8 @@
-from dynamic_form.form_manager import FormManager
+from .form_manager import FormManager
+from .interfaces import IDataStore, IFormParser
 
-from dynamic_form.datastore_mongodb import MongoDsAdapter
-from dynamic_form.datastore_api import ApiDataStore
+from .datastore_mongodb import MongoDataStore
+from .parser_json import JsonFlaskParser
 
-__all__ = ["FormManager", "MongoDsAdapter", "ApiDataStore"]
+__all__ = ["FormManager", "IDataStore", "IFormParser", "MongoDataStore", "JsonFlaskParser"]
+

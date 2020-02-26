@@ -7,9 +7,26 @@ from wtforms.widgets import *
 
 from dynamic_form.parser_json import JsonFlaskParser
 
+from dynamic_form.template_builder import (
+    FormTemplate,
+    PropertyTemplate,
+    FieldTemplate,
+    FormFieldTemplate,
+    ValueTypeTemplate,
+    ControlledVocabularyTemplate,
+    ItemTemplate,
+    ArgsTemplate
+)
 
-class TestInputParserHelper(unittest.TestCase):
+
+class TestJsonFormParser(unittest.TestCase):
     """The following test check the helper functions of parser json."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app = Flask(__name__)
+        cls.app.secret_key = "not secret"
+        cls.app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
     def test_tuple_diff_length(self):
         """Test conversion of tuples"""
@@ -55,33 +72,26 @@ class TestInputParserHelper(unittest.TestCase):
                 self.assertEqual(act_obj.max, obj_cls_values["max"])
 
     def test_simple_field_attributes_in_kwargs(self):
-        field_type = "StringField"
-        variable_name = "user_name"
-        label = "User Name"
-        description = "A simple string field"
 
-        template_field = {
-            "class_name": field_type,
-            "property": {"name": variable_name},
-            "args": {},
-            "kwargs": {"label": label, "description": description}
-        }
+        template_field = FieldTemplate("StringField",
+                                       PropertyTemplate("User Name", "user_name", None, None),
+                                       label="User Name",
+                                       description="A simple string field")
 
-        act_name, act_field = JsonFlaskParser._parse_field(template_field)
+        act_name, act_field = JsonFlaskParser._parse_field(template_field.to_dict())
 
-        self.assertEqual(act_field.kwargs["label"], label)
+        self.assertEqual(act_field.kwargs["label"], "User Name")
+        self.assertEqual(act_field.kwargs["description"], "A simple string field")
 
-        app = Flask(__name__)
-        app.secret_key = "not secret"
-        with app.test_request_context():
+        with self.app.test_request_context():
             form_cls = type("TestForm", (FlaskForm,), {})
             setattr(form_cls, act_name, act_field)
 
             form = form_cls()
 
-            self.assertTrue(hasattr(form, variable_name))
-            field = getattr(form, variable_name)
-            self.assertEqual(getattr(field, "type"), field_type)
+            self.assertTrue(hasattr(form, "user_name"))
+            field = getattr(form, "user_name")
+            self.assertEqual(getattr(field, "type"), "StringField")
 
     def test_simple_field_attributes_in_field(self):
         field_type = "StringField"
@@ -182,7 +192,6 @@ class TestInputParserHelper(unittest.TestCase):
         self.assertEqual(act_field.kwargs["choices"][0], tuple([choice1, choice1]))
         self.assertEqual(act_field.kwargs["choices"][1], tuple([choice2, choice2]))
 
-
 #    def test_list_field(self):
 #        field_type = "FieldList"
 #        variable_name = "synonyms"
@@ -201,26 +210,6 @@ class TestInputParserHelper(unittest.TestCase):
 #
 #        act_name, act_field = JsonFlaskParser._parse_field(template_field)
 
-from dynamic_form.template_builder import (
-    FormTemplate,
-    PropertyTemplate,
-    FieldTemplate,
-    FormFieldTemplate,
-    ValueTypeTemplate,
-    ControlledVocabularyTemplate,
-    ItemTemplate,
-    ArgsTemplate
-)
-
-
-class TestToTemplate(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.app = Flask(__name__)
-        cls.app.secret_key = "not secret"
-        cls.app.config["WTF_CSRF_CHECK_DEFAULT"] = False
-
     def test_form_with_fieldList(self):
         """Create form which contains a FieldList"""
 
@@ -235,7 +224,7 @@ class TestToTemplate(unittest.TestCase):
                           min_entries=1))
 
         with self.app.test_request_context():
-            form_name, form_cls = JsonFlaskParser.to_form(template_form.to_dict())
+            form_name, form_cls = JsonFlaskParser().to_form(template_form.to_dict())
             form_instance = form_cls()
 
             self.assertTrue(hasattr(form_instance, "synonyms"))
@@ -266,7 +255,7 @@ class TestToTemplate(unittest.TestCase):
                               PropertyTemplate("Controlled Vocabulary", "ctrl_voc", "administrative",
                                                "The controlled vocabulary"))))
 
-        form_name, from_cls = JsonFlaskParser.to_form(template_form.to_dict())
+        form_name, from_cls = JsonFlaskParser().to_form(template_form.to_dict())
 
         with self.app.test_request_context():
             form_instance = from_cls()
@@ -274,25 +263,24 @@ class TestToTemplate(unittest.TestCase):
     def test_form_with_fieldList_and_FormField(self):
 
         template_form = FormTemplate("Contacts", "contact_form", "A form to register multiple contacts")\
-            .add_field(FieldTemplate("FieldList",
-                                     PropertyTemplate("Contact List", "contact_list", "administrative",
-                                                      "A contact list"),
-                                     ArgsTemplate("DataObjects", [
-                                         FormFieldTemplate(PropertyTemplate("Contact", "contact", "administrative",
-                                                                            "A contact"))
-                                                  .add_field(FieldTemplate("StringField",
-                                                                           PropertyTemplate("First Name", "firstname",
-                                                                                            "administrative",
-                                                                                            "first name of user")))
-                                                  .add_field(FieldTemplate("StringField",
-                                                                           PropertyTemplate("Last Name", "lastname",
-                                                                                            "administrative",
-                                                                                            "last name of user")))
-                       ]),
-                       min_entries=1))
+            .add_field(
+            FieldTemplate("FieldList",
+                          PropertyTemplate("Contact List", "contact_list", "administrative", "A contact list"),
+                          ArgsTemplate("DataObjects", [
+                              FormFieldTemplate(PropertyTemplate("Contact", "contact", "administrative", "A contact"))
+                                       .add_field(
+                                  FieldTemplate("StringField",
+                                                PropertyTemplate("First Name", "firstname","administrative",
+                                                                 "first name of user")))
+                                       .add_field(
+                                  FieldTemplate("StringField",
+                                                PropertyTemplate("Last Name", "lastname","administrative",
+                                                                 "last name of user")))
+                          ]),
+                          min_entries=1))
 
         with self.app.test_request_context():
-            act_form_name, form_cls = JsonFlaskParser.to_form(template_form.to_dict())
+            act_form_name, form_cls = JsonFlaskParser().to_form(template_form.to_dict())
             form_instance = form_cls()
             self.assertEqual(act_form_name, "contact_form")
             self.assertTrue(hasattr(form_instance, "contact_list"))

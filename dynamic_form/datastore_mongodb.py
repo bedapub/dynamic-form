@@ -1,22 +1,24 @@
-from pymongo import MongoClient
+from pymongo.collection import Collection
 
-from dynamic_form.abstract_datastore import AbstractDataStore
+from .interfaces import IDataStore
+from .errors import DataStoreException
 
 
-class MongoDsAdapter(AbstractDataStore):
-    """Datastore implementation for a Mongo database """
+class MongoDataStore(IDataStore):
+    """Data store implementation for Mongo database """
 
-    def __init__(self, database, form_collection):
-        super(MongoDsAdapter, self).__init__()
+    def __init__(self, db_collection):
+        super(MongoDataStore, self).__init__()
 
-        if not isinstance(database.client, MongoClient):
-            raise AttributeError("Client must be an instance of MongoClient")
+        if db_collection and not isinstance(db_collection, Collection):
+            raise DataStoreException(f"db_collection has to be a subclass of {Collection.__class__.__name__}")
 
-        self.client = database.client
-        self.db = database
-        self.collection = self.db[form_collection]
+        self.collection = db_collection
 
-    def load_all_forms(self):
+    def __repr__(self):
+        return f"MongoDataStore(collection: {self.collection.full_name})"
+
+    def load_forms(self):
         """Load all forms from database"""
         cursor = self.collection.find({})
         for form_template in cursor:
@@ -45,4 +47,4 @@ class MongoDsAdapter(AbstractDataStore):
 
     def deprecate_form(self, identifier):
         """Deprecate form (forms should not be deleted)"""
-        raise NotImplementedError
+        self.collection.update_one({"_id": identifier}, {"$set": {"deprecated": True}})

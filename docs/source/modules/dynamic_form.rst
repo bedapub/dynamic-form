@@ -4,30 +4,6 @@ dynamic\_form package
 Submodules
 ----------
 
-dynamic\_form.abstract\_datastore module
-----------------------------------------
-
-.. automodule:: dynamic_form.abstract_datastore
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dynamic\_form.abstract\_parser module
--------------------------------------
-
-.. automodule:: dynamic_form.abstract_parser
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dynamic\_form.datastore\_api module
------------------------------------
-
-.. automodule:: dynamic_form.datastore_api
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 dynamic\_form.datastore\_mongodb module
 ---------------------------------------
 
@@ -36,10 +12,26 @@ dynamic\_form.datastore\_mongodb module
    :undoc-members:
    :show-inheritance:
 
+dynamic\_form.errors module
+---------------------------
+
+.. automodule:: dynamic_form.errors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 dynamic\_form.form\_manager module
 ----------------------------------
 
 .. automodule:: dynamic_form.form_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+dynamic\_form.interfaces module
+-------------------------------
+
+.. automodule:: dynamic_form.interfaces
    :members:
    :undoc-members:
    :show-inheritance:

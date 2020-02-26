@@ -1,19 +1,22 @@
+import abc
 """A collection of builders to create a form template from python classes"""
 
 
-class BaseTemplate(object):
+class BaseTemplate(abc.ABC):
 
+    @abc.abstractmethod
     def to_dict(self) -> dict:
         raise NotImplementedError
 
 
 class LNDTemplate(BaseTemplate):
+    """Label, Name, Description template"""
 
     def __init__(self, label, name, description, deprecated=False):
         self.label = label
         self.name = name
         self.description = description
-        self.deprecated=deprecated
+        self.deprecated = deprecated
 
     def to_dict(self) -> dict:
         return {
@@ -24,7 +27,7 @@ class LNDTemplate(BaseTemplate):
         }
 
 
-class ItemTemplate():
+class ItemTemplate(BaseTemplate):
 
     def __init__(self, label, name, description):
         self.label = label
@@ -34,7 +37,6 @@ class ItemTemplate():
 
     def add_synonym(self, synonym):
         self.synonyms.append(synonym)
-
         return self
 
     def to_dict(self) -> dict:
@@ -47,7 +49,7 @@ class ItemTemplate():
         return result
 
 
-class ControlledVocabularyTemplate():
+class ControlledVocabularyTemplate(BaseTemplate):
 
     def __init__(self, label, name, description):
         self.label = label
@@ -132,6 +134,7 @@ class ObjectsTemplate(BaseTemplate):
             "objects": [obj.to_dict() for obj in self.objs],
         }
 
+
 class ArgsTemplate(BaseTemplate):
 
     def __init__(self, _cls, objs=None):
@@ -144,9 +147,10 @@ class ArgsTemplate(BaseTemplate):
             "objects": [obj.to_dict() for obj in self.objs]
         }
 
+
 class FieldTemplate(BaseTemplate):
 
-    def __init__(self, class_name, property, args:ArgsTemplate = None, **kwargs):
+    def __init__(self, class_name, property, args: ArgsTemplate = None, **kwargs):
         self.class_name = class_name
         self.property = property
         self.args = args or {}
@@ -160,6 +164,7 @@ class FieldTemplate(BaseTemplate):
             "kwargs": self.kwargs
         }
         return result
+
 
 class FormFieldTemplate(FieldTemplate):
 

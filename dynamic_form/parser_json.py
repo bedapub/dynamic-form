@@ -5,10 +5,10 @@ from wtforms.fields.html5 import *
 from wtforms.validators import *
 from wtforms.widgets import *
 
-from dynamic_form.abstract_parser import AbstractParserAdapter
+from .interfaces import IFormParser
 
 
-class JsonFlaskParser(AbstractParserAdapter):
+class JsonFlaskParser(IFormParser):
     """Class to build a FlaskForm from a json object
 
     # >>> from dynamic_form.template_builder import FormTemplate, FieldTemplate
@@ -16,25 +16,25 @@ class JsonFlaskParser(AbstractParserAdapter):
     # ...JsonFlaskParser.to_form()
 
     """
+    def __init__(self, form_type=FlaskForm):
+        self.form_type = form_type
 
-    @classmethod
-    def to_form(cls, template_form):
+    def to_form(self, template_form):
 
         # Nested forms have their name stored in the property
         form_name = template_form.get("name") or template_form["property"]["name"]
 
         # Define empty form class with the specified name
-        form_cls = type(form_name, (FlaskForm,), {})
+        form_cls = type(form_name, (self.form_type,), {})
 
         # Add fields to form
         for field_template in template_form.get("fields"):
-            field_name, field = cls._parse_field(field_template)
+            field_name, field = self._parse_field(field_template)
             setattr(form_cls, field_name, field)
 
         return form_name, form_cls
 
-    @classmethod
-    def to_template(cls, form, **kwargs):
+    def to_template(self, form, **kwargs):
         raise NotImplementedError
 
         # template_form = {}
@@ -132,7 +132,7 @@ class JsonFlaskParser(AbstractParserAdapter):
         """
         # If the form contains a subform
         if obj.get("class_name") == "FormField":
-            _, form = JsonFlaskParser.to_form(obj)
+            _, form = JsonFlaskParser().to_form(obj)
             obj_cls = FormField(form_class=form)
             return obj_cls
 
