@@ -8,6 +8,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Distrubution
+build/
+dist/
+
 
 # IDE
 .idea

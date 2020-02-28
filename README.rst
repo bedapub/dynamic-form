@@ -5,18 +5,17 @@ A package to create forms dynamically from a data store during runtime.
 
 Documentation
 -------------
-`Sphinx documentation`_ is directly accessible or can be build with :console:`make html`.
+Please find the documentation on `Read the Docs`_.
 
-.. _Sphinx documentation: ./docs/source/Introduction.rst
+.. _Read the docs: https://dynamic-webforms.readthedocs.io/en/stable
 
-Built with
-----------
-The core software does not have any dependencies besides the python standard library. The concrete implementations
-of the data store and the input parser depend on:
+Installation
+------------
 
-* pyMongo - `MongoDataStore`
-* wt_forms - `JsonFormParser`
-* wtforms - `JsonFormParser`
+.. code-block:: console
+
+    pip install dynamic-form
+
 
 Purpose
 -------
@@ -26,5 +25,5 @@ prototype.
 
 Authors
 -------
-* **[Rafael Müller](rafael.mueller1@gmail.com)** - Initial work
+* **Rafael Müller** <mailto:rafa.molitoris@gmail.com> - Initial work
 * **Laura Badi** - Supervisor
