@@ -12,6 +12,14 @@ __pycache__/
 # IDE
 .idea
 
+# Compiled / optimized files
+__pycharch__
+*.py[cod]
+*$py.class
+
+# IDE
+.idea
+
 # Flask
 instance/
 .webassets-cache
