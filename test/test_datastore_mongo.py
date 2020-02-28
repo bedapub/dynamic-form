@@ -61,7 +61,7 @@ class TestMongoDataStoreWithEntry(unittest.TestCase):
         self.assertEqual(len(list(form_template)), 1)
 
     def test_load_login_form_by_id(self):
-        identifier = self.res.inserted_id
+        identifier = self.res
         form = self.data_store.load_form(identifier)
         self.assertEqual(len(form.keys()), 5)
 
@@ -69,13 +69,17 @@ class TestMongoDataStoreWithEntry(unittest.TestCase):
         form = self.data_store.load_form_by_name("user_login")
         self.assertEqual(len(form.keys()), 5)
 
+    def test_load_nonexisting_login_form_by_name(self):
+        form = self.data_store.load_form_by_name("nonexisting")
+        self.assertIsNone(form)
+
     def test_search_form(self):
         res = self.data_store.find_form(search_filter={"name": "user_login"})
 
         self.assertEqual(len(list(res)), 1)
 
     def test_deprecate_form(self):
-        identifier = self.res.inserted_id
+        identifier = self.res
         self.data_store.deprecate_form(identifier)
 
         form = self.data_store.load_form(identifier)

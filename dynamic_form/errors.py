@@ -11,5 +11,5 @@ class DataStoreException(DynamicFormException):
     pass
 
 
-class ParserAdapterException(DynamicFormException):
+class FormParserException(DynamicFormException):
     pass

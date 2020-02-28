@@ -37,7 +37,8 @@ class MongoDataStore(IDataStore):
     def insert_form(self, form_template):
         """Push new form to the database"""
         result = self.collection.insert_one(form_template)
-        return result
+        identifier = result.inserted_id
+        return identifier
 
     def find_form(self, search_filter, *args, **kwargs):
         """Search query to find forms"""

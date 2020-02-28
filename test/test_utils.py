@@ -14,3 +14,15 @@ def get_login_form():
                                  ]}}))
 
     return form
+
+
+def get_many_login_forms(num=3):
+
+    forms = []
+
+    for i in range(num):
+        form = get_login_form()
+        form.name = form.name + f"_{i}"
+        forms.append(form)
+    return forms
+
