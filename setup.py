@@ -3,8 +3,8 @@ import os
 import re
 from setuptools import setup, find_packages
 
-DOCUMENTATION_URL = "https://dynamic-webforms.readthedocs.io/en/stable/"
-SOURCE_CODE_URL = "https://github.com/bedapub/Dynamic-Webforms"
+DOCUMENTATION_URL = "https://dynamic-form.readthedocs.io/en/stable/"
+SOURCE_CODE_URL = "https://github.com/bedapub/dynamic-form"
 
 module_path = os.path.dirname(__file__)
 

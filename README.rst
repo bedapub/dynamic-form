@@ -7,7 +7,7 @@ Documentation
 -------------
 Please find the documentation on `Read the Docs`_.
 
-.. _Read the docs: https://dynamic-webforms.readthedocs.io/en/stable
+.. _Read the docs: https://dynamic-form.readthedocs.io/en/stable
 
 Installation
 ------------
