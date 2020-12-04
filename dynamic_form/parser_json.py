@@ -211,6 +211,10 @@ class JsonFlaskParser(IFormParser):
     def _parse_objs(cls, template_objects):
         objects = []
         for template_obj in template_objects:
+            if not template_obj.get("kwargs"):
+                template_obj["kwargs"] = {}
+            if template_obj["class_name"] == "SelectField":
+                template_obj["kwargs"]["choices"] = cls.get_choice(template_obj)
             objects.append(cls._parse_obj(template_obj))
 
         return objects
