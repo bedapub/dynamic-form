@@ -237,12 +237,18 @@ class JsonFlaskParser(IFormParser):
     def get_choice(cls, field_template):
         lbl = "choices"
 
+        # Needs to be removed from template because it's not allowed in WTForm
+        allow_synonyms = field_template["kwargs"].pop("allow_synonyms", False)
+
         if lbl in field_template["kwargs"]:
             return field_template["kwargs"]["choices"]
         elif field_template.get("property", {}).get("value_type", {}).get("data_type") == "ctrl_voc":
-            choice_list = field_template["property"]["value_type"].get("controlled_vocabulary", {})["items"]
+            cv_items = field_template["property"]["value_type"].get("controlled_vocabulary", {})["items"]
             choices = []
-            for choice in choice_list:
-                choices.append((choice["name"], choice["label"]))
+            for cv_item in cv_items:
+                choices.append((cv_item["name"], cv_item["label"]))
+                if allow_synonyms:
+                    for synonym in cv_item["synonyms"]:
+                        choices.append((synonym, synonym))
 
             return {"args": {"tuples": choices}}
