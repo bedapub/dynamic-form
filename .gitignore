@@ -15,6 +15,7 @@ dist/
 
 # IDE
 .idea
+.vscode/
 
 # Compiled / optimized files
 __pycharch__
