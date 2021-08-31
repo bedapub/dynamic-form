@@ -6,4 +6,4 @@ from .parser_json import JsonFlaskParser
 
 __all__ = ["FormManager", "IDataStore", "IFormParser", "MongoDataStore", "JsonFlaskParser"]
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
