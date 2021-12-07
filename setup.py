@@ -30,8 +30,8 @@ setup(
     long_description_content_type="text/x-rst",
     install_requires=[
         "pymongo>=3.10.1",
-        "wtforms>=2.2.1",
-        "flask_wtf>=0.14.2",
+        "wtforms>=3.0.0",
+        "flask_wtf>=1.0.0",
         "expiringdict>=1.2.0"
     ],
     keywords="form webform database datastore",

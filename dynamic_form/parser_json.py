@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 
 from wtforms.fields import *
-from wtforms.fields.html5 import *
 from wtforms.validators import *
 from wtforms.widgets import *
 

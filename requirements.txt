@@ -1,7 +1,7 @@
 expiringdict==1.2.0
-Flask==1.1.1
-Flask-WTF==0.14.2
-pymongo==3.10.1
-Sphinx==2.3.1
-Werkzeug==0.16.0
-wtforms==2.2.1
+Flask==2.0.2
+Flask-WTF==1.0.0
+pymongo==3.12.1
+Sphinx==4.2.0
+Werkzeug==2.0.2
+wtforms==3.0.0
