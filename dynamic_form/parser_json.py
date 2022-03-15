@@ -77,6 +77,7 @@ class JsonFlaskParser(IFormParser):
 
             "InputRequired": InputRequired,
             "DataRequired": DataRequired,
+            "Optional": Optional,
             "Length": Length,
             "NumberRange": NumberRange,
 
