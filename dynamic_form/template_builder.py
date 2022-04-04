@@ -51,10 +51,12 @@ class ItemTemplate(BaseTemplate):
 
 class ControlledVocabularyTemplate(BaseTemplate):
 
-    def __init__(self, label, name, description):
+    def __init__(self, label, name, description, cv_origin, cv_external_id=""):
         self.label = label
         self.name = name
         self.description = description
+        self.cv_origin = cv_origin
+        self.cv_external_id = cv_external_id
         self.items = []
 
     def add_item(self, item: ItemTemplate):
@@ -66,6 +68,8 @@ class ControlledVocabularyTemplate(BaseTemplate):
             "label": self.label,
             "name": self.name,
             "description": self.description,
+            "cv_origin": self.cv_origin,
+            "cv_external_id": self.cv_external_id,
             "items": [item.to_dict() for item in self.items]
         }
         return result
