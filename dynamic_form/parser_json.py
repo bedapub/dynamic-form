@@ -149,6 +149,9 @@ class JsonFlaskParser(IFormParser):
         if "kwargs" in obj:
             kwargs = cls._parse_kwargs(obj["kwargs"])
 
+        if "property" in obj:
+            kwargs["name"] = obj["property"]["name"]
+
         obj_cls = JsonFlaskParser._get_cls(obj["class_name"])
         obj_ins = obj_cls(*args, **kwargs)
         if custom_kwargs is not None:
