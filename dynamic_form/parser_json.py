@@ -95,6 +95,7 @@ class JsonFlaskParser(IFormParser):
 
         # Add field attributes from local and global attributes. Local attributes overwrite global attributes
         value = {}
+        field_template["custom_kwargs"] = {}
         for lbl in ["label", "description"]:
             if lbl in field_template.get("kwargs", []):
                 continue
@@ -106,7 +107,9 @@ class JsonFlaskParser(IFormParser):
                 raise AttributeError(f"{lbl} was not found in field_template")
 
         if field_template["class_name"] == "SelectField":
-            value["choices"] = cls.get_choice(field_template)
+            allow_synonyms = field_template["kwargs"].pop("allow_synonyms", False)
+            field_template["custom_kwargs"]["allow_synonyms"] = allow_synonyms
+            value["choices"] = cls.get_choice(field_template, allow_synonyms)
 
         if not field_template.get("kwargs"):
             field_template["kwargs"] = {}
@@ -130,6 +133,8 @@ class JsonFlaskParser(IFormParser):
                  "kwargs" : {...}
              }
         """
+        custom_kwargs = obj.pop("custom_kwargs", None)
+
         # If the form contains a subform
         if obj.get("class_name") == "FormField":
             _, form = JsonFlaskParser().to_form(obj)
@@ -145,7 +150,10 @@ class JsonFlaskParser(IFormParser):
             kwargs = cls._parse_kwargs(obj["kwargs"])
 
         obj_cls = JsonFlaskParser._get_cls(obj["class_name"])
-        return obj_cls(*args, **kwargs)
+        obj_ins = obj_cls(*args, **kwargs)
+        if custom_kwargs is not None:
+            obj_ins.custom_kwargs = custom_kwargs
+        return obj_ins
 
     @classmethod
     def _parse_args(cls, template_args):
@@ -211,10 +219,13 @@ class JsonFlaskParser(IFormParser):
     def _parse_objs(cls, template_objects):
         objects = []
         for template_obj in template_objects:
+            template_obj["custom_kwargs"] = {}
             if not template_obj.get("kwargs"):
                 template_obj["kwargs"] = {}
             if template_obj["class_name"] == "SelectField":
-                template_obj["kwargs"]["choices"] = cls.get_choice(template_obj)
+                allow_synonyms = template_obj["kwargs"].pop("allow_synonyms", False)
+                template_obj["custom_kwargs"]["allow_synonyms"] = allow_synonyms
+                template_obj["kwargs"]["choices"] = cls.get_choice(template_obj, allow_synonyms)
             objects.append(cls._parse_obj(template_obj))
 
         return objects
@@ -234,11 +245,8 @@ class JsonFlaskParser(IFormParser):
         return tuple_list
 
     @classmethod
-    def get_choice(cls, field_template):
+    def get_choice(cls, field_template, allow_synonyms):
         lbl = "choices"
-
-        # Needs to be removed from template because it's not allowed in WTForm
-        allow_synonyms = field_template["kwargs"].pop("allow_synonyms", False)
 
         if lbl in field_template["kwargs"]:
             return field_template["kwargs"]["choices"]
