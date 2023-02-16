@@ -3,5 +3,5 @@ Flask==2.2.2
 Flask-WTF==1.0.1
 pymongo==4.2.0
 Sphinx==4.2.0
-Werkzeug==2.2.2
+Werkzeug==2.2.3
 wtforms==3.0.0
