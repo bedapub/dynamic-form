@@ -225,6 +225,7 @@ class JsonFlaskParser(IFormParser):
             template_obj["custom_kwargs"] = {}
             if not template_obj.get("kwargs"):
                 template_obj["kwargs"] = {}
+            # TODO: Probably not in the correct place, only work for nested SelectField
             if template_obj["class_name"] == "SelectField":
                 allow_synonyms = template_obj["kwargs"].pop("allow_synonyms", False)
                 template_obj["custom_kwargs"]["allow_synonyms"] = allow_synonyms
