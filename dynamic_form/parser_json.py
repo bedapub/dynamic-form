@@ -222,15 +222,17 @@ class JsonFlaskParser(IFormParser):
     def _parse_objs(cls, template_objects):
         objects = []
         for template_obj in template_objects:
-            template_obj["custom_kwargs"] = {}
-            if not template_obj.get("kwargs"):
-                template_obj["kwargs"] = {}
+            template_obj_copy = dict(template_obj)
+            template_obj_copy["custom_kwargs"] = {}
+            if not template_obj_copy.get("kwargs"):
+                template_obj_copy["kwargs"] = {}
             # TODO: Probably not in the correct place, only work for nested SelectField
-            if template_obj["class_name"] == "SelectField":
-                allow_synonyms = template_obj["kwargs"].pop("allow_synonyms", False)
-                template_obj["custom_kwargs"]["allow_synonyms"] = allow_synonyms
-                template_obj["kwargs"]["choices"] = cls.get_choice(template_obj, allow_synonyms)
-            objects.append(cls._parse_obj(template_obj))
+            if template_obj_copy["class_name"] == "SelectField":
+                # Create a copy to avoid modifying the original object
+                allow_synonyms = template_obj_copy["kwargs"].pop("allow_synonyms", False)
+                template_obj_copy["custom_kwargs"]["allow_synonyms"] = allow_synonyms
+                template_obj_copy["kwargs"]["choices"] = cls.get_choice(template_obj_copy, allow_synonyms)
+            objects.append(cls._parse_obj(template_obj_copy))
 
         return objects
 

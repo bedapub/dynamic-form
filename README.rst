@@ -27,3 +27,9 @@ Authors
 -------
 * **Rafael Müller** <mailto:rafa.molitoris@gmail.com> - Initial work
 * **Laura Badi** - Supervisor
+
+
+Updates
+-------
+
+* v1.0.0: 2025-08-25: Fix weakly referenced error and requirements changes
