@@ -29,9 +29,9 @@ setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/x-rst",
     install_requires=[
-        "pymongo>=3.10.1",
+        "pymongo>=4.10.1",
         "wtforms>=3.0.0",
-        "flask_wtf>=1.0.0",
+        "flask_wtf>=1.2.0",
         "expiringdict>=1.2.0"
     ],
     keywords="form webform database datastore",
@@ -39,7 +39,7 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.12",
     ],
     extra_require={
         "dev": [

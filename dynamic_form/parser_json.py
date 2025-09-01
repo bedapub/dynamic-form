@@ -36,27 +36,6 @@ class JsonFlaskParser(IFormParser):
     def to_template(self, form, **kwargs):
         raise NotImplementedError
 
-        # template_form = {}
-        #
-        #
-        # template_fields = []
-        # field_names = form._fields.keys()
-        # for index, field_name in field_names.enumerate():
-        #     template_fields.append(cls._parse_form_field(getattr(form, field_name), kwargs['property_ids'][index]))
-        #
-        # TODO: Include label and description
-        # template_form['name'] = form.__class__.__name__
-        # template_form['fields'] = template_fields
-        #
-        # return template_form
-
-    # @classmethod
-    # def _parse_form_field(cls, field, property_id):
-    #     field = {}
-    #
-    #     field['property'] = property_id
-    #
-    #     return field
 
     @staticmethod
     def _get_cls(cls_name):
@@ -95,31 +74,33 @@ class JsonFlaskParser(IFormParser):
 
         # Add field attributes from local and global attributes. Local attributes overwrite global attributes
         value = {}
-        field_template["custom_kwargs"] = {}
+        field_template_copy = dict(field_template)
+        field_template_copy["custom_kwargs"] = {}
         for lbl in ["label", "description"]:
-            if lbl in field_template.get("kwargs", []):
+            if lbl in field_template_copy.get("kwargs", []):
                 continue
-            if field_template.get(lbl, None):
-                value[lbl] = field_template[lbl]
-            elif field_template.get("property", {}).get(lbl, None):
-                value[lbl] = field_template["property"][lbl]
+            if field_template_copy.get(lbl, None):
+                value[lbl] = field_template_copy[lbl]
+            elif field_template_copy.get("property", {}).get(lbl, None):
+                value[lbl] = field_template_copy["property"][lbl]
             else:
                 raise AttributeError(f"{lbl} was not found in field_template")
 
-        if field_template["class_name"] == "SelectField":
-            allow_synonyms = field_template["kwargs"].pop("allow_synonyms", False)
-            field_template["custom_kwargs"]["allow_synonyms"] = allow_synonyms
-            value["choices"] = cls.get_choice(field_template, allow_synonyms)
+        if field_template_copy["class_name"] == "SelectField":
+             # Create a copy of kwargs to avoid modifying the original object
+            allow_synonyms = field_template_copy.get("kwargs", {}).pop("allow_synonyms", False)
+            field_template_copy["custom_kwargs"]["allow_synonyms"] = allow_synonyms
+            value["choices"] = cls.get_choice(field_template_copy, allow_synonyms)
 
-        if not field_template.get("kwargs"):
-            field_template["kwargs"] = {}
+        if not field_template_copy.get("kwargs"):
+            field_template_copy["kwargs"] = {}
 
-        field_template["kwargs"].update(value)
+        field_template_copy["kwargs"].update(value)
 
         # The name of field is determined by its property.
-        field_name = field_template["property"]["name"]
+        field_name = field_template_copy["property"]["name"]
 
-        field = cls._parse_obj(field_template)
+        field = cls._parse_obj(field_template_copy)
 
         return field_name, field
 
